@@ -2,13 +2,13 @@ import json
 import os
 
 import pytest
-from bertopic_easy import bertopic_easy
+from bertopic_easy import bertopic_easy, bertopic_easy_azure
 from bertopic_easy.classify_outliers import classify_outliers
 from bertopic_easy.cluster import cluster
 from bertopic_easy.embedding import embed
 from bertopic_easy.input_examples import diet_actions
 from bertopic_easy.main import bertopic_easy_azure
-from bertopic_easy.models import AzureOpenAIConfig
+from bertopic_easy.models import AzureConfig, AzureOpenAIConfig
 from bertopic_easy.naming import name
 from dotenv import load_dotenv
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
@@ -17,16 +17,9 @@ from rich import print
 load_dotenv()
 openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 async_openai = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-"""
-class AzureOpenAIConfig(BaseModel):
-    api_version: str
-    azure_endpoint: str
-    azure_deployment: str
-    api_key: str
-    timeout: int
-"""
-from bertopic_easy.models import AzureOpenAIConfig
+
 ## AZURE OPENAI CONFIG ##
+from bertopic_easy.models import AzureOpenAIConfig
 from openai import AzureOpenAI
 
 # Below needs to be refactored in the future so we can remove hardcoded values
@@ -206,7 +199,7 @@ def test_bertopic_easy():
 
 
 def test_bertopic_easy_azure():
-    # Create Azure OpenAI configs for each component
+    # Create Azure OpenAI configs for each component (legacy 3-config style)
     embedding_config = AzureOpenAIConfig(
         api_version=azure_openai_config.api_version,
         azure_endpoint=azure_openai_config.azure_endpoint,
@@ -239,6 +232,27 @@ def test_bertopic_easy_azure():
         azure_embeder_config=embedding_config,
         azure_namer_config=naming_config,
         azure_classifier_config=classifier_config,
+    )
+
+    print(clusters)
+
+
+def test_bertopic_easy_azure_simple():
+    """Test using the new simplified AzureConfig (single object instead of 3)."""
+    config = AzureConfig(
+        api_key=azure_openai_config.api_key,
+        api_version=azure_openai_config.api_version,
+        azure_endpoint=azure_openai_config.azure_endpoint,
+        embedding_deployment="text-embedding-3-large",
+        llm_deployment="o3-mini",
+        embedding_timeout=120,
+    )
+
+    clusters = bertopic_easy_azure(
+        texts=diet_actions,
+        reasoning_effort="low",
+        subject="personal diet intervention outcomes",
+        azure_config=config,
     )
 
     print(clusters)

@@ -1,10 +1,10 @@
 import os
-from typing import Literal
+from typing import Literal, Optional
 
 from bertopic_easy.classify_outliers import classify_outliers
 from bertopic_easy.cluster import cluster
 from bertopic_easy.input_examples import diet_actions
-from bertopic_easy.models import AzureOpenAIConfig, Clusters
+from bertopic_easy.models import AzureConfig, AzureOpenAIConfig, Clusters
 from bertopic_easy.naming import name
 from dotenv import load_dotenv
 from loguru import logger
@@ -12,8 +12,6 @@ from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 from rich import print
 
 load_dotenv()
-openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-async_openai = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 
 def bertopic_easy(
@@ -22,6 +20,8 @@ def bertopic_easy(
     openai_api_key: str,
     reasoning_effort: Literal["low", "medium", "high"],
     subject: str,
+    embed_model: str = "text-embedding-3-large",
+    llm_model: str = "o3-mini",
 ) -> Clusters:
     if len(texts) < 4:
         raise ValueError("Need at least 4 texts to cluster")
@@ -31,14 +31,14 @@ def bertopic_easy(
         bertopic_kwargs=dict(min_topic_size=4),
         docs=texts,
         openai=openai,
-        embed_llm_name="text-embedding-3-large",
+        embed_llm_name=embed_model,
         with_disk_cache=True,
     )
     named_clusters = name(
         clusters=clusters,
         openai=openai,
-        llm_model_name="o3-mini",
-        reasoning_effort="low",
+        llm_model_name=llm_model,
+        reasoning_effort=reasoning_effort,
         subject=subject,
     )
     try:
@@ -46,7 +46,7 @@ def bertopic_easy(
             named_clusters=named_clusters,
             outliers=clusters.clusters[-1],
             openai=async_openai,
-            llm_name="o3-mini",  # ONLY THIS LLM ALLOWED for now
+            llm_name=llm_model,
             reasoning_effort=reasoning_effort,
         )
     except KeyError:
@@ -60,23 +60,41 @@ def bertopic_easy_azure(
     texts: list[str],
     reasoning_effort: Literal["low", "medium", "high"],
     subject: str,
-    azure_embeder_config: AzureOpenAIConfig,
-    azure_namer_config: AzureOpenAIConfig,
-    azure_classifier_config: AzureOpenAIConfig,
+    azure_config: Optional[AzureConfig] = None,
+    azure_embedder_config: Optional[AzureOpenAIConfig] = None,
+    azure_embeder_config: Optional[AzureOpenAIConfig] = None,
+    azure_namer_config: Optional[AzureOpenAIConfig] = None,
+    azure_classifier_config: Optional[AzureOpenAIConfig] = None,
 ) -> Clusters:
     if len(texts) < 4:
         raise ValueError("Need at least 4 texts to cluster")
+
+    if azure_config is not None:
+        embed_cfg = azure_config._to_embedding_config()
+        llm_cfg = azure_config._to_llm_config()
+    else:
+        embed_cfg = azure_embedder_config or azure_embeder_config
+        llm_cfg = azure_namer_config
+        if embed_cfg is None or llm_cfg is None:
+            raise ValueError(
+                "Provide either azure_config or all three legacy config params"
+            )
+        if azure_classifier_config is None:
+            azure_classifier_config = llm_cfg
+
+    classifier_cfg = azure_classifier_config if azure_config is None else llm_cfg
+
     clusters = cluster(
         bertopic_kwargs=dict(min_topic_size=4),
         docs=texts,
-        openai=AzureOpenAI(**azure_embeder_config.model_dump()),
-        embed_llm_name=azure_embeder_config.azure_deployment,
+        openai=AzureOpenAI(**embed_cfg.model_dump()),
+        embed_llm_name=embed_cfg.azure_deployment,
         with_disk_cache=True,
     )
     named_clusters = name(
         clusters=clusters,
-        openai=AzureOpenAI(**azure_namer_config.model_dump()),
-        llm_model_name=azure_namer_config.azure_deployment,
+        openai=AzureOpenAI(**llm_cfg.model_dump()),
+        llm_model_name=llm_cfg.azure_deployment,
         reasoning_effort=reasoning_effort,
         subject=subject,
     )
@@ -84,8 +102,8 @@ def bertopic_easy_azure(
         merged = classify_outliers(
             named_clusters=named_clusters,
             outliers=clusters.clusters[-1],
-            openai=AsyncAzureOpenAI(**azure_classifier_config.model_dump()),
-            llm_name=azure_classifier_config.azure_deployment,  # ONLY THIS LLM ALLOWED for now
+            openai=AsyncAzureOpenAI(**classifier_cfg.model_dump()),
+            llm_name=classifier_cfg.azure_deployment,
             reasoning_effort=reasoning_effort,
         )
     except KeyError:

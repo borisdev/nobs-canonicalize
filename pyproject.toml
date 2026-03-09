@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "bertopic-easy"
-version = "0.3.0"
+version = "0.5.0"
 description = ""
 authors = ["Boris Dev <boris.dev@gmail.com>"]
 readme = "README.md"
 
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.13"
+python = ">=3.11,<3.15"
 numpy = "1.26.4"
 python-dotenv = "^1.0.1"
 loguru = "^0.7.2"

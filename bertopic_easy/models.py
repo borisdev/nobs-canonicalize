@@ -30,6 +30,36 @@ class AzureOpenAIConfig(BaseModel):
         logger.success(f"Saved Azure OpenAI config to {file_path}")
 
 
+class AzureConfig(BaseModel):
+    """Simplified Azure config with shared account fields and per-role deployment names."""
+
+    api_key: str
+    api_version: str
+    azure_endpoint: str
+    embedding_deployment: str = "text-embedding-3-large"
+    llm_deployment: str = "o3-mini"
+    embedding_timeout: Optional[int] = 120
+    llm_timeout: Optional[int] = None
+
+    def _to_embedding_config(self) -> AzureOpenAIConfig:
+        return AzureOpenAIConfig(
+            api_key=self.api_key,
+            api_version=self.api_version,
+            azure_endpoint=self.azure_endpoint,
+            azure_deployment=self.embedding_deployment,
+            timeout=self.embedding_timeout,
+        )
+
+    def _to_llm_config(self) -> AzureOpenAIConfig:
+        return AzureOpenAIConfig(
+            api_key=self.api_key,
+            api_version=self.api_version,
+            azure_endpoint=self.azure_endpoint,
+            azure_deployment=self.llm_deployment,
+            timeout=self.llm_timeout,
+        )
+
+
 class LabeledDoc(BaseModel):
     pos: Optional[int] = None
     doc: str

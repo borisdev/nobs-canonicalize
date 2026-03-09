@@ -2,12 +2,11 @@ from copy import deepcopy
 from typing import Literal, Optional, Union
 
 import instructor
+from bertopic_easy.models import Clusters
 from loguru import logger
 from openai import AzureOpenAI, OpenAI
 from pydantic import BaseModel
 from rich import print
-
-from bertopic_easy.models import Clusters
 
 
 def name(
