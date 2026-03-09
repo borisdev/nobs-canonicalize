@@ -1,4 +1,4 @@
-# CLAUDE.md - Guidelines for BERTopic-Easy
+# CLAUDE.md - Guidelines for nobs-clusters
 
 ## Build & Test Commands
 ```bash
