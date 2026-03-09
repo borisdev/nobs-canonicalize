@@ -2,12 +2,12 @@ import json
 import os
 
 import pytest
-from nobs_clusters import bertopic_easy, bertopic_easy_azure
+from nobs_clusters import nobs_cluster, nobs_cluster_azure
 from nobs_clusters.classify_outliers import classify_outliers
 from nobs_clusters.cluster import cluster
 from nobs_clusters.embedding import embed
 from nobs_clusters.input_examples import diet_actions
-from nobs_clusters.main import bertopic_easy_azure
+from nobs_clusters.main import nobs_cluster_azure
 from nobs_clusters.models import AzureConfig, AzureOpenAIConfig
 from nobs_clusters.naming import name
 from dotenv import load_dotenv
@@ -187,9 +187,9 @@ def test_classify_outliers_azure(
     print(merged)
 
 
-def test_bertopic_easy():
+def test_nobs_cluster():
     openai_api_key = os.environ["OPENAI_API_KEY"]
-    clusters = bertopic_easy(
+    clusters = nobs_cluster(
         texts=diet_actions,
         openai_api_key=openai_api_key,
         reasoning_effort="low",
@@ -198,7 +198,7 @@ def test_bertopic_easy():
     print(clusters)
 
 
-def test_bertopic_easy_azure():
+def test_nobs_cluster_azure():
     # Create Azure OpenAI configs for each component (legacy 3-config style)
     embedding_config = AzureOpenAIConfig(
         api_version=azure_openai_config.api_version,
@@ -224,8 +224,8 @@ def test_bertopic_easy_azure():
         timeout=60,
     )
 
-    # Run the bertopic_easy_azure function
-    clusters = bertopic_easy_azure(
+    # Run the nobs_cluster_azure function
+    clusters = nobs_cluster_azure(
         texts=diet_actions,
         reasoning_effort="low",
         subject="personal diet intervention outcomes",
@@ -237,7 +237,7 @@ def test_bertopic_easy_azure():
     print(clusters)
 
 
-def test_bertopic_easy_azure_simple():
+def test_nobs_cluster_azure_simple():
     """Test using the new simplified AzureConfig (single object instead of 3)."""
     config = AzureConfig(
         api_key=azure_openai_config.api_key,
@@ -248,7 +248,7 @@ def test_bertopic_easy_azure_simple():
         embedding_timeout=120,
     )
 
-    clusters = bertopic_easy_azure(
+    clusters = nobs_cluster_azure(
         texts=diet_actions,
         reasoning_effort="low",
         subject="personal diet intervention outcomes",

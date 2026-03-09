@@ -122,11 +122,11 @@ class TestImports:
             AzureConfig,
             AzureOpenAIConfig,
             Clusters,
-            bertopic_easy,
-            bertopic_easy_azure,
+            nobs_cluster,
+            nobs_cluster_azure,
         )
-        assert callable(bertopic_easy)
-        assert callable(bertopic_easy_azure)
+        assert callable(nobs_cluster)
+        assert callable(nobs_cluster_azure)
 
     def test_azure_config_importable_from_top(self):
         from nobs_clusters import AzureConfig
@@ -140,7 +140,7 @@ class TestImports:
 
 class TestBertopicEasyAzureValidation:
     def test_rejects_too_few_texts(self):
-        from nobs_clusters import bertopic_easy_azure, AzureConfig
+        from nobs_clusters import nobs_cluster_azure, AzureConfig
 
         cfg = AzureConfig(
             api_key="k",
@@ -148,7 +148,7 @@ class TestBertopicEasyAzureValidation:
             azure_endpoint="https://x.openai.azure.com/",
         )
         with pytest.raises(ValueError, match="at least 4 texts"):
-            bertopic_easy_azure(
+            nobs_cluster_azure(
                 texts=["a", "b"],
                 reasoning_effort="low",
                 subject="test",
@@ -156,10 +156,10 @@ class TestBertopicEasyAzureValidation:
             )
 
     def test_rejects_missing_legacy_configs(self):
-        from nobs_clusters import bertopic_easy_azure
+        from nobs_clusters import nobs_cluster_azure
 
         with pytest.raises(ValueError, match="azure_config"):
-            bertopic_easy_azure(
+            nobs_cluster_azure(
                 texts=["a", "b", "c", "d", "e"],
                 reasoning_effort="low",
                 subject="test",
@@ -175,10 +175,10 @@ class TestBertopicEasyAzureValidation:
 
 class TestBertopicEasyValidation:
     def test_rejects_too_few_texts(self):
-        from nobs_clusters import bertopic_easy
+        from nobs_clusters import nobs_cluster
 
         with pytest.raises(ValueError, match="at least 4 texts"):
-            bertopic_easy(
+            nobs_cluster(
                 texts=["a"],
                 openai_api_key="fake-key",
                 reasoning_effort="low",

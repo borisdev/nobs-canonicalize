@@ -14,7 +14,7 @@ from rich import print
 load_dotenv()
 
 
-def bertopic_easy(
+def nobs_cluster(
     *,
     texts: list[str],
     openai_api_key: str,
@@ -55,7 +55,7 @@ def bertopic_easy(
     return merged
 
 
-def bertopic_easy_azure(
+def nobs_cluster_azure(
     *,
     texts: list[str],
     reasoning_effort: Literal["low", "medium", "high"],
