@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from rich import print
 
-from bertopic_easy import bertopic_easy
+from nobs_clusters import bertopic_easy
 
 load_dotenv()
 

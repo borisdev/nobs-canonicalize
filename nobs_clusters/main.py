@@ -1,11 +1,11 @@
 import os
 from typing import Literal, Optional
 
-from bertopic_easy.classify_outliers import classify_outliers
-from bertopic_easy.cluster import cluster
-from bertopic_easy.input_examples import diet_actions
-from bertopic_easy.models import AzureConfig, AzureOpenAIConfig, Clusters
-from bertopic_easy.naming import name
+from nobs_clusters.classify_outliers import classify_outliers
+from nobs_clusters.cluster import cluster
+from nobs_clusters.input_examples import diet_actions
+from nobs_clusters.models import AzureConfig, AzureOpenAIConfig, Clusters
+from nobs_clusters.naming import name
 from dotenv import load_dotenv
 from loguru import logger
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI

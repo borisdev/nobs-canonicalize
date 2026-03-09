@@ -19,8 +19,8 @@ from rich import print
 from rich.console import Console
 from rich.theme import Theme
 
-from bertopic_easy.embedding import embed
-from bertopic_easy.models import Clusters, LabeledDoc
+from nobs_clusters.embedding import embed
+from nobs_clusters.models import Clusters, LabeledDoc
 
 custom_theme = Theme({"info": "dim cyan", "warning": "magenta", "danger": "bold red"})
 console = Console(theme=custom_theme)

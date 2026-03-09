@@ -1,7 +1,7 @@
 """Unit tests for models and config logic — no API keys required."""
 
 import pytest
-from bertopic_easy.models import AzureConfig, AzureOpenAIConfig
+from nobs_clusters.models import AzureConfig, AzureOpenAIConfig
 
 
 class TestAzureConfig:
@@ -118,7 +118,7 @@ class TestAzureOpenAIConfig:
 class TestImports:
     def test_top_level_imports(self):
         """Verify __init__.py exports the right symbols."""
-        from bertopic_easy import (
+        from nobs_clusters import (
             AzureConfig,
             AzureOpenAIConfig,
             Clusters,
@@ -129,7 +129,7 @@ class TestImports:
         assert callable(bertopic_easy_azure)
 
     def test_azure_config_importable_from_top(self):
-        from bertopic_easy import AzureConfig
+        from nobs_clusters import AzureConfig
         cfg = AzureConfig(
             api_key="k",
             api_version="v",
@@ -140,7 +140,7 @@ class TestImports:
 
 class TestBertopicEasyAzureValidation:
     def test_rejects_too_few_texts(self):
-        from bertopic_easy import bertopic_easy_azure, AzureConfig
+        from nobs_clusters import bertopic_easy_azure, AzureConfig
 
         cfg = AzureConfig(
             api_key="k",
@@ -156,7 +156,7 @@ class TestBertopicEasyAzureValidation:
             )
 
     def test_rejects_missing_legacy_configs(self):
-        from bertopic_easy import bertopic_easy_azure
+        from nobs_clusters import bertopic_easy_azure
 
         with pytest.raises(ValueError, match="azure_config"):
             bertopic_easy_azure(
@@ -175,7 +175,7 @@ class TestBertopicEasyAzureValidation:
 
 class TestBertopicEasyValidation:
     def test_rejects_too_few_texts(self):
-        from bertopic_easy import bertopic_easy
+        from nobs_clusters import bertopic_easy
 
         with pytest.raises(ValueError, match="at least 4 texts"):
             bertopic_easy(

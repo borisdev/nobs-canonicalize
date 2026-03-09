@@ -2,14 +2,14 @@ import json
 import os
 
 import pytest
-from bertopic_easy import bertopic_easy, bertopic_easy_azure
-from bertopic_easy.classify_outliers import classify_outliers
-from bertopic_easy.cluster import cluster
-from bertopic_easy.embedding import embed
-from bertopic_easy.input_examples import diet_actions
-from bertopic_easy.main import bertopic_easy_azure
-from bertopic_easy.models import AzureConfig, AzureOpenAIConfig
-from bertopic_easy.naming import name
+from nobs_clusters import bertopic_easy, bertopic_easy_azure
+from nobs_clusters.classify_outliers import classify_outliers
+from nobs_clusters.cluster import cluster
+from nobs_clusters.embedding import embed
+from nobs_clusters.input_examples import diet_actions
+from nobs_clusters.main import bertopic_easy_azure
+from nobs_clusters.models import AzureConfig, AzureOpenAIConfig
+from nobs_clusters.naming import name
 from dotenv import load_dotenv
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 from rich import print
@@ -19,7 +19,7 @@ openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 async_openai = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 ## AZURE OPENAI CONFIG ##
-from bertopic_easy.models import AzureOpenAIConfig
+from nobs_clusters.models import AzureOpenAIConfig
 from openai import AzureOpenAI
 
 # Below needs to be refactored in the future so we can remove hardcoded values

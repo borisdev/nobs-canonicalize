@@ -6,8 +6,8 @@ from loguru import logger
 from openai import AsyncAzureOpenAI, AsyncOpenAI
 from pydantic import BaseModel, Field
 
-from bertopic_easy.chain import Chain
-from bertopic_easy.models import Clusters, LabeledDoc
+from nobs_clusters.chain import Chain
+from nobs_clusters.models import Clusters, LabeledDoc
 
 
 async def _classify_outliers(

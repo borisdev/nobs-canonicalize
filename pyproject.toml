@@ -1,5 +1,6 @@
 [tool.poetry]
-name = "bertopic-easy"
+name = "nobs-clusters"
+packages = [{include = "nobs_clusters"}]
 version = "0.5.0"
 description = ""
 authors = ["Boris Dev <boris.dev@gmail.com>"]
