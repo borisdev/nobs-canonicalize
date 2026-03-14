@@ -14,6 +14,22 @@ Tested on up to 10,000 strings. Evaluate your results carefully.
 
 > **Previously published as `bertopic-easy`.** That package now redirects here.
 
+## How it works
+
+```mermaid
+graph TD;
+    A[Surface strings] --> B((1. Cluster<br>via BERTopic));
+    B -->|groups| C((2. Name groups<br>via LLM));
+    B -->|outliers| D((3. Classify outliers<br>into groups));
+    C -->|canonical labels| D;
+    D --> E[Canonical Concepts];
+```
+
+1. **Cluster** — BERTopic groups surface strings using `text-embedding-3-large` embeddings
+2. **Name** — `o3-mini` generates a clean canonical label for each group
+3. **Classify outliers** — `o3-mini` assigns ungrouped strings into the named groups
+4. **Output** — deduplicated canonical concepts ready for downstream use
+
 ## Install
 
 ```shell
@@ -107,22 +123,6 @@ print(clusters)
 ## Example output
 
 ![output](images/polished_clusters.png)
-
-## How it works
-
-```mermaid
-graph TD;
-    A[Surface strings] --> B((1. Cluster<br>via BERTopic));
-    B -->|groups| C((2. Name groups<br>via LLM));
-    B -->|outliers| D((3. Classify outliers<br>into groups));
-    C -->|canonical labels| D;
-    D --> E[Canonical Concepts];
-```
-
-1. **Cluster** — BERTopic groups surface strings using `text-embedding-3-large` embeddings
-2. **Name** — `o3-mini` generates a clean canonical label for each group
-3. **Classify outliers** — `o3-mini` assigns ungrouped strings into the named groups
-4. **Output** — deduplicated canonical concepts ready for downstream use
 
 ## Contributing
 
