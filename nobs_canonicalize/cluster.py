@@ -7,12 +7,6 @@ from pathlib import Path
 from typing import Literal, Optional, Union
 
 from loguru import logger
-
-logger.debug(
-    "Importing BERTopic takes a while... see the BERTopic library's FAQ for more info"
-)
-from bertopic import BERTopic
-from loguru import logger
 from openai import AzureOpenAI, OpenAI
 from pydantic import BaseModel, Field
 from rich import print
@@ -37,6 +31,11 @@ def cluster(
     if len(docs) < 4:
         print(docs)
         raise ValueError("Need at least 4 texts to cluster")
+    logger.debug(
+        "Importing BERTopic takes a while... see the BERTopic library's FAQ for more info"
+    )
+    from bertopic import BERTopic
+
     topic_model = BERTopic(**bertopic_kwargs)
     embeddings = embed(
         texts=docs,

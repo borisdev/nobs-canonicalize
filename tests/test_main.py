@@ -5,6 +5,7 @@ import pytest
 from nobs_canonicalize import nobs_canonicalize, nobs_canonicalize_azure
 from nobs_canonicalize.classify_outliers import classify_outliers
 from nobs_canonicalize.cluster import cluster
+from nobs_canonicalize.cluster_faiss_leiden import cluster_faiss_leiden
 from nobs_canonicalize.embedding import embed
 from nobs_canonicalize.input_examples import diet_actions
 from nobs_canonicalize.main import nobs_canonicalize_azure
@@ -255,4 +256,71 @@ def test_nobs_canonicalize_azure_simple():
         azure_config=config,
     )
 
+    print(clusters)
+
+
+# --- FAISS + Leiden backend tests ---
+
+
+@pytest.fixture(scope="session")
+def test_clusters_faiss_leiden():
+    clusters = cluster_faiss_leiden(
+        docs=diet_actions,
+        openai=openai,
+        embed_llm_name="text-embedding-3-large",
+        with_disk_cache=True,
+    )
+    return clusters
+
+
+def test_faiss_leiden_cluster(test_clusters_faiss_leiden):
+    clusters = test_clusters_faiss_leiden
+    non_outlier_keys = [k for k in clusters.clusters if k != -1]
+    assert len(non_outlier_keys) > 1, "Should produce multiple clusters"
+    total_docs = sum(len(v) for v in clusters.clusters.values())
+    assert total_docs == len(diet_actions), "All docs should be accounted for"
+    print(f"FAISS+Leiden: {len(non_outlier_keys)} clusters")
+    for k in sorted(clusters.clusters.keys(), key=lambda x: (x == -1, x)):
+        label = "outliers" if k == -1 else f"cluster {k}"
+        print(f"  {label}: {len(clusters.clusters[k])} docs")
+
+
+@pytest.fixture(scope="session")
+def test_naming_faiss_leiden_fixture(test_clusters_faiss_leiden):
+    named_clusters = name(
+        clusters=test_clusters_faiss_leiden,
+        openai=openai,
+        llm_model_name="o3-mini",
+        reasoning_effort="low",
+        subject="personal diet intervention outcomes",
+    )
+    return named_clusters
+
+
+def test_classify_outliers_faiss_leiden(
+    test_naming_faiss_leiden_fixture, test_clusters_faiss_leiden
+):
+    if -1 not in test_clusters_faiss_leiden.clusters:
+        pytest.skip("No outliers to classify")
+    merged = classify_outliers(
+        named_clusters=test_naming_faiss_leiden_fixture,
+        outliers=test_clusters_faiss_leiden.clusters[-1],
+        openai=async_openai,
+        llm_name="o3-mini",
+        reasoning_effort="low",
+    )
+    print(merged)
+
+
+def test_nobs_canonicalize_faiss_leiden():
+    openai_api_key = os.environ["OPENAI_API_KEY"]
+    clusters = nobs_canonicalize(
+        texts=diet_actions,
+        openai_api_key=openai_api_key,
+        reasoning_effort="low",
+        subject="personal diet intervention outcomes",
+        backend="faiss_leiden",
+    )
+    non_outlier_keys = [k for k in clusters.clusters if k != -1 and k != "-1"]
+    assert len(non_outlier_keys) > 1, "Should produce multiple named clusters"
     print(clusters)

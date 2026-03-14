@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "nobs-canonicalize"
 packages = [{include = "nobs_canonicalize"}]
-version = "0.5.0"
+version = "0.6.0"
 description = "Canonicalize verbose text strings into clean, deduplicated groups using BERTopic + LLM"
 authors = ["Boris Dev <boris.dev@gmail.com>"]
 readme = "README.md"
@@ -17,6 +17,8 @@ instructor = "^1.7.0"
 openai = "^1.58.1"
 diskcache = "^5.6.3"
 bertopic = "^0.16.4"
+faiss-cpu = "^1.7.4"
+python-igraph = "^0.11.0"
 pytest-asyncio = "^0.25.3"
 update = "^0.0.1"
 more-itertools = "^10.6.0"

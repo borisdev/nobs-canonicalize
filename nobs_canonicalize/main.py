@@ -3,6 +3,7 @@ from typing import Literal, Optional
 
 from nobs_canonicalize.classify_outliers import classify_outliers
 from nobs_canonicalize.cluster import cluster
+from nobs_canonicalize.cluster_faiss_leiden import cluster_faiss_leiden
 from nobs_canonicalize.input_examples import diet_actions
 from nobs_canonicalize.models import AzureConfig, AzureOpenAIConfig, Clusters
 from nobs_canonicalize.naming import name
@@ -22,18 +23,27 @@ def nobs_canonicalize(
     subject: str,
     embed_model: str = "text-embedding-3-large",
     llm_model: str = "o3-mini",
+    backend: Literal["bertopic", "faiss_leiden"] = "bertopic",
 ) -> Clusters:
     if len(texts) < 4:
         raise ValueError("Need at least 4 texts to cluster")
     openai = OpenAI(api_key=openai_api_key)
     async_openai = AsyncOpenAI(api_key=openai_api_key)
-    clusters = cluster(
-        bertopic_kwargs=dict(min_topic_size=4),
-        docs=texts,
-        openai=openai,
-        embed_llm_name=embed_model,
-        with_disk_cache=True,
-    )
+    if backend == "faiss_leiden":
+        clusters = cluster_faiss_leiden(
+            docs=texts,
+            openai=openai,
+            embed_llm_name=embed_model,
+            with_disk_cache=True,
+        )
+    else:
+        clusters = cluster(
+            bertopic_kwargs=dict(min_topic_size=4),
+            docs=texts,
+            openai=openai,
+            embed_llm_name=embed_model,
+            with_disk_cache=True,
+        )
     named_clusters = name(
         clusters=clusters,
         openai=openai,
@@ -65,6 +75,7 @@ def nobs_canonicalize_azure(
     azure_embeder_config: Optional[AzureOpenAIConfig] = None,
     azure_namer_config: Optional[AzureOpenAIConfig] = None,
     azure_classifier_config: Optional[AzureOpenAIConfig] = None,
+    backend: Literal["bertopic", "faiss_leiden"] = "bertopic",
 ) -> Clusters:
     if len(texts) < 4:
         raise ValueError("Need at least 4 texts to cluster")
@@ -84,13 +95,21 @@ def nobs_canonicalize_azure(
 
     classifier_cfg = azure_classifier_config if azure_config is None else llm_cfg
 
-    clusters = cluster(
-        bertopic_kwargs=dict(min_topic_size=4),
-        docs=texts,
-        openai=AzureOpenAI(**embed_cfg.model_dump()),
-        embed_llm_name=embed_cfg.azure_deployment,
-        with_disk_cache=True,
-    )
+    if backend == "faiss_leiden":
+        clusters = cluster_faiss_leiden(
+            docs=texts,
+            openai=AzureOpenAI(**embed_cfg.model_dump()),
+            embed_llm_name=embed_cfg.azure_deployment,
+            with_disk_cache=True,
+        )
+    else:
+        clusters = cluster(
+            bertopic_kwargs=dict(min_topic_size=4),
+            docs=texts,
+            openai=AzureOpenAI(**embed_cfg.model_dump()),
+            embed_llm_name=embed_cfg.azure_deployment,
+            with_disk_cache=True,
+        )
     named_clusters = name(
         clusters=clusters,
         openai=AzureOpenAI(**llm_cfg.model_dump()),
