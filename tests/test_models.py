@@ -1,7 +1,7 @@
 """Unit tests for models and config logic — no API keys required."""
 
 import pytest
-from nobs_clusters.models import AzureConfig, AzureOpenAIConfig
+from nobs_canonicalize.models import AzureConfig, AzureOpenAIConfig
 
 
 class TestAzureConfig:
@@ -118,18 +118,18 @@ class TestAzureOpenAIConfig:
 class TestImports:
     def test_top_level_imports(self):
         """Verify __init__.py exports the right symbols."""
-        from nobs_clusters import (
+        from nobs_canonicalize import (
             AzureConfig,
             AzureOpenAIConfig,
             Clusters,
-            nobs_cluster,
-            nobs_cluster_azure,
+            nobs_canonicalize,
+            nobs_canonicalize_azure,
         )
-        assert callable(nobs_cluster)
-        assert callable(nobs_cluster_azure)
+        assert callable(nobs_canonicalize)
+        assert callable(nobs_canonicalize_azure)
 
     def test_azure_config_importable_from_top(self):
-        from nobs_clusters import AzureConfig
+        from nobs_canonicalize import AzureConfig
         cfg = AzureConfig(
             api_key="k",
             api_version="v",
@@ -140,7 +140,7 @@ class TestImports:
 
 class TestBertopicEasyAzureValidation:
     def test_rejects_too_few_texts(self):
-        from nobs_clusters import nobs_cluster_azure, AzureConfig
+        from nobs_canonicalize import nobs_canonicalize_azure, AzureConfig
 
         cfg = AzureConfig(
             api_key="k",
@@ -148,7 +148,7 @@ class TestBertopicEasyAzureValidation:
             azure_endpoint="https://x.openai.azure.com/",
         )
         with pytest.raises(ValueError, match="at least 4 texts"):
-            nobs_cluster_azure(
+            nobs_canonicalize_azure(
                 texts=["a", "b"],
                 reasoning_effort="low",
                 subject="test",
@@ -156,10 +156,10 @@ class TestBertopicEasyAzureValidation:
             )
 
     def test_rejects_missing_legacy_configs(self):
-        from nobs_clusters import nobs_cluster_azure
+        from nobs_canonicalize import nobs_canonicalize_azure
 
         with pytest.raises(ValueError, match="azure_config"):
-            nobs_cluster_azure(
+            nobs_canonicalize_azure(
                 texts=["a", "b", "c", "d", "e"],
                 reasoning_effort="low",
                 subject="test",
@@ -175,10 +175,10 @@ class TestBertopicEasyAzureValidation:
 
 class TestBertopicEasyValidation:
     def test_rejects_too_few_texts(self):
-        from nobs_clusters import nobs_cluster
+        from nobs_canonicalize import nobs_canonicalize
 
         with pytest.raises(ValueError, match="at least 4 texts"):
-            nobs_cluster(
+            nobs_canonicalize(
                 texts=["a"],
                 openai_api_key="fake-key",
                 reasoning_effort="low",

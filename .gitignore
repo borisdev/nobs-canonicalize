@@ -1,5 +1,6 @@
 *.pyc
 cache_embeddings/
 .env
+.secret
 __pycache__
 dist/

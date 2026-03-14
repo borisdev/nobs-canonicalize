@@ -1,4 +1,4 @@
-# CLAUDE.md - Guidelines for nobs-clusters
+# CLAUDE.md - Guidelines for nobs-canonicalize
 
 ## Build & Test Commands
 ```bash
@@ -25,6 +25,8 @@ poetry run pytest -v
 - **Testing**: Use pytest with fixtures, name tests with `test_` prefix
 
 ## Project Architecture
-- Uses BERTopic for topic modeling with OpenAI embeddings
+- Canonicalizes verbose strings into clean, deduplicated groups
+- Uses BERTopic for clustering + OpenAI LLM for naming and outlier classification
 - Supports both regular OpenAI and Azure OpenAI clients
 - Implements disk caching for performance optimization
+- Previously published as `bertopic-easy` (that package now redirects here)

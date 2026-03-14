@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from rich import print
 
-from nobs_clusters import nobs_cluster
+from nobs_canonicalize import nobs_canonicalize
 
 load_dotenv()
 
@@ -39,7 +39,7 @@ texts = [
     "Avoiding seed oils and processed foods",
 ]
 
-clusters = nobs_cluster(
+clusters = nobs_canonicalize(
     texts=texts,
     openai_api_key=openai_api_key,
     reasoning_effort="low",

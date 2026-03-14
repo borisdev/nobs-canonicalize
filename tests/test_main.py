@@ -2,14 +2,14 @@ import json
 import os
 
 import pytest
-from nobs_clusters import nobs_cluster, nobs_cluster_azure
-from nobs_clusters.classify_outliers import classify_outliers
-from nobs_clusters.cluster import cluster
-from nobs_clusters.embedding import embed
-from nobs_clusters.input_examples import diet_actions
-from nobs_clusters.main import nobs_cluster_azure
-from nobs_clusters.models import AzureConfig, AzureOpenAIConfig
-from nobs_clusters.naming import name
+from nobs_canonicalize import nobs_canonicalize, nobs_canonicalize_azure
+from nobs_canonicalize.classify_outliers import classify_outliers
+from nobs_canonicalize.cluster import cluster
+from nobs_canonicalize.embedding import embed
+from nobs_canonicalize.input_examples import diet_actions
+from nobs_canonicalize.main import nobs_canonicalize_azure
+from nobs_canonicalize.models import AzureConfig, AzureOpenAIConfig
+from nobs_canonicalize.naming import name
 from dotenv import load_dotenv
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 from rich import print
@@ -19,7 +19,7 @@ openai = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 async_openai = AsyncOpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 ## AZURE OPENAI CONFIG ##
-from nobs_clusters.models import AzureOpenAIConfig
+from nobs_canonicalize.models import AzureOpenAIConfig
 from openai import AzureOpenAI
 
 # Below needs to be refactored in the future so we can remove hardcoded values
@@ -187,9 +187,9 @@ def test_classify_outliers_azure(
     print(merged)
 
 
-def test_nobs_cluster():
+def test_nobs_canonicalize():
     openai_api_key = os.environ["OPENAI_API_KEY"]
-    clusters = nobs_cluster(
+    clusters = nobs_canonicalize(
         texts=diet_actions,
         openai_api_key=openai_api_key,
         reasoning_effort="low",
@@ -198,7 +198,7 @@ def test_nobs_cluster():
     print(clusters)
 
 
-def test_nobs_cluster_azure():
+def test_nobs_canonicalize_azure():
     # Create Azure OpenAI configs for each component (legacy 3-config style)
     embedding_config = AzureOpenAIConfig(
         api_version=azure_openai_config.api_version,
@@ -224,8 +224,8 @@ def test_nobs_cluster_azure():
         timeout=60,
     )
 
-    # Run the nobs_cluster_azure function
-    clusters = nobs_cluster_azure(
+    # Run the nobs_canonicalize_azure function
+    clusters = nobs_canonicalize_azure(
         texts=diet_actions,
         reasoning_effort="low",
         subject="personal diet intervention outcomes",
@@ -237,7 +237,7 @@ def test_nobs_cluster_azure():
     print(clusters)
 
 
-def test_nobs_cluster_azure_simple():
+def test_nobs_canonicalize_azure_simple():
     """Test using the new simplified AzureConfig (single object instead of 3)."""
     config = AzureConfig(
         api_key=azure_openai_config.api_key,
@@ -248,7 +248,7 @@ def test_nobs_cluster_azure_simple():
         embedding_timeout=120,
     )
 
-    clusters = nobs_cluster_azure(
+    clusters = nobs_canonicalize_azure(
         texts=diet_actions,
         reasoning_effort="low",
         subject="personal diet intervention outcomes",

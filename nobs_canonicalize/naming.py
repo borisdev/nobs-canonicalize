@@ -2,7 +2,7 @@ from copy import deepcopy
 from typing import Literal, Optional, Union
 
 import instructor
-from nobs_clusters.models import Clusters
+from nobs_canonicalize.models import Clusters
 from loguru import logger
 from openai import AzureOpenAI, OpenAI
 from pydantic import BaseModel

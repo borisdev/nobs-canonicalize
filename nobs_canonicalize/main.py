@@ -1,11 +1,11 @@
 import os
 from typing import Literal, Optional
 
-from nobs_clusters.classify_outliers import classify_outliers
-from nobs_clusters.cluster import cluster
-from nobs_clusters.input_examples import diet_actions
-from nobs_clusters.models import AzureConfig, AzureOpenAIConfig, Clusters
-from nobs_clusters.naming import name
+from nobs_canonicalize.classify_outliers import classify_outliers
+from nobs_canonicalize.cluster import cluster
+from nobs_canonicalize.input_examples import diet_actions
+from nobs_canonicalize.models import AzureConfig, AzureOpenAIConfig, Clusters
+from nobs_canonicalize.naming import name
 from dotenv import load_dotenv
 from loguru import logger
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
@@ -14,7 +14,7 @@ from rich import print
 load_dotenv()
 
 
-def nobs_cluster(
+def nobs_canonicalize(
     *,
     texts: list[str],
     openai_api_key: str,
@@ -55,7 +55,7 @@ def nobs_cluster(
     return merged
 
 
-def nobs_cluster_azure(
+def nobs_canonicalize_azure(
     *,
     texts: list[str],
     reasoning_effort: Literal["low", "medium", "high"],

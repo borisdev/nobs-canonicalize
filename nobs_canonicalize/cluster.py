@@ -19,8 +19,8 @@ from rich import print
 from rich.console import Console
 from rich.theme import Theme
 
-from nobs_clusters.embedding import embed
-from nobs_clusters.models import Clusters, LabeledDoc
+from nobs_canonicalize.embedding import embed
+from nobs_canonicalize.models import Clusters, LabeledDoc
 
 custom_theme = Theme({"info": "dim cyan", "warning": "magenta", "danger": "bold red"})
 console = Console(theme=custom_theme)
