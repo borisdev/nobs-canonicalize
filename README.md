@@ -112,9 +112,9 @@ print(clusters)
 
 ```mermaid
 graph TD;
-    A[Surface strings] --> B((1. Cluster via BERTopic));
-    B -->|groups| C((2. Name groups via LLM));
-    B -->|outliers| D((3. Classify outliers into groups));
+    A[Surface strings] --> B((1. Cluster<br>via BERTopic));
+    B -->|groups| C((2. Name groups<br>via LLM));
+    B -->|outliers| D((3. Classify outliers<br>into groups));
     C -->|canonical labels| D;
     D --> E[Canonical Concepts];
 ```
