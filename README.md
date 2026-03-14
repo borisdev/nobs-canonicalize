@@ -12,8 +12,6 @@ Given a list of noisy, verbose text strings (e.g. medical interventions, product
 
 Tested on up to 10,000 strings. Evaluate your results carefully.
 
-> **Previously published as `bertopic-easy`.** That package now redirects here.
-
 ## How it works
 
 ```mermaid
